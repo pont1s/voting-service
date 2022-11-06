@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.3
+    container_name: votes-mariadb-development
+    restart: always
+    networks:
+      - votes-network-development
+    volumes:
+      - ~/votes-volume-development:/data/db
+    environment:
+      MARIADB_ROOT_PASSWORD: It7YLOsq9b0g2b5t6E9fn
+      MARIADB_DATABASE: votes
+    env_file:
+      - ./configs/.env.development
+    ports:
+      - "3306:3306"
+
+  pma:
+      image: phpmyadmin
+      container_name: votes-pma-development
+      restart: always
+      networks:
+        - votes-network-development
+      volumes:
+        - ~/shikireki-volume-development:/data/db
+      environment:
+        PMA_HOST: votes-mariadb-development
+        PMA_PORT: 3306
+        UPLOAD_LIMIT: 900M
+      depends_on:
+        - mariadb
+      ports:
+        - "4081:80"
+
+volumes:
+  votes-volume-development:
+    name: votes-volume-development
+    driver: local
+networks:
+  votes-network-development:
+    name: votes-network-development
+    driver: bridge

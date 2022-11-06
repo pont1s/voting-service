@@ -1,0 +1,18 @@
+version: "3.9" # optional since v1.27.0
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shikireki-web-app-production
+    networks:
+      - default
+    ports:
+      - 80
+    volumes:
+      - /data/nginx:/etc/nginx/sites-enabled
+    command: nginx -g "daemon off;"
+networks:
+  default:
+    name: containers-controller_default
+    external: true
