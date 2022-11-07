@@ -12,7 +12,7 @@ import { checkIsKey } from '@/utils/rsa/errors';
 import { messageToHashInt, sign } from '@/utils/rsa/operations';
 
 const form = reactive({
-  name: {
+  title: {
     value: '',
   },
   dateOfStart: {
@@ -50,8 +50,8 @@ const privateKeyPem = ref('');
 
 const isKeysNotEmpty = computed(() => publicKeyPem.value && privateKeyPem.value);
 
-const isVoteCreateAvailable = computed(() => form.name.value && form.dateOfStart.value && form.dateOfEnd.value
-  && form.dateOfEndAddPrivateKeys.value && form.voters.value.length > 0 && publicKeyPem.value && privateKeyPem.value);
+const isVoteCreateAvailable = computed(() => (form.title.value && form.dateOfStart.value && form.dateOfEnd.value
+  && form.dateOfEndAddPrivateKeys.value && form.voters.value.length > 0 && isKeysNotEmpty.value));
 
 const onGenerateKeysButtonClickHandler = async () => {
   const keypair = await makeKeypair(512, HashAlg.SHA_256, KeyUse.Write);
@@ -81,7 +81,7 @@ const onFormSubmitHandler = (e: Event) => {
             Название голосования
           </div>
           <n-input
-            v-model:value="form.name.value"
+            v-model:value="form.title.value"
             placeholder="Название голосования"
             size="large"
           />
@@ -188,7 +188,7 @@ const onFormSubmitHandler = (e: Event) => {
           class="vote-create-action"
           type="primary"
           native-type="submit"
-          :disabled="isVoteCreateAvailable"
+          :disabled="!isVoteCreateAvailable"
         >
           Создать голосование
         </v-button>
