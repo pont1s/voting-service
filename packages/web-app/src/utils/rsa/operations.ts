@@ -48,6 +48,11 @@ async function sha256(message: string) {
 //   return EM;
 // }
 
+export async function messageToHashInt(message: string) {
+  const messageHash = await sha256(message);
+  return new BigInteger(messageHash, 16);
+}
+
 export async function blind(message: string, modulus: string, exponent: string) {
   const messageHash = new BigInteger(await sha256(message), 16);
 

@@ -34,6 +34,14 @@ export const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/vote-create',
+    name: 'vote-create',
+    component: () => import('@/views/VoteCreate.vue'),
+    meta: {
+      layout: 'MainLayout',
+    },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/Login.vue'),

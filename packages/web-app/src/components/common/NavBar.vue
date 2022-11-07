@@ -5,11 +5,35 @@ import NavBarItem from '@/components/common/navbar/NavBarItem.vue';
 import { useInitialStore } from '@/stores/initialStore';
 import VIcon from '@/components/kit/VIcon.vue';
 import { useChangeColorSchema } from '@/hooks/useChangeColorSchema';
-import { computed, onMounted } from 'vue';
+import {
+  computed, onMounted, ref, watch,
+} from 'vue';
 
 const route = useRoute();
 
-const routeName = computed(() => route.name as string | undefined);
+const routesNameAvailable = [
+  'votes',
+  'vote-create',
+];
+
+const initRouteName = () => {
+  let routeNameVal = 'votes';
+  route.matched.forEach((routeVal) => {
+    if (typeof routeVal.name === 'string' && routesNameAvailable.includes(routeVal.name)) {
+      routeNameVal = routeVal.name;
+    }
+  });
+
+  return routeNameVal;
+};
+
+const routeName = ref<string>(initRouteName());
+
+watch(() => route.name, (newRuteName) => {
+  if (typeof newRuteName === 'string' && routesNameAvailable.includes(newRuteName)) {
+    routeName.value = newRuteName;
+  }
+});
 
 const initialStore = useInitialStore();
 
@@ -38,16 +62,24 @@ const changeColorSchemaClickHandler = (schemaName: string | undefined) => {
   <aside class="nav-bar">
     <div class="nav-bar-up-content">
       <div v-if="!initialStore.isMobileVersion" class="logo">
-        <VIcon name="logo-light" :size="48" />
-        <span>shikireki</span>
+        <VIcon name="logo" :size="48" />
+        <span>votes</span>
       </div>
       <span v-if="!initialStore.isMobileVersion" class="nav-bar-items-title">Меню</span>
       <div class="nav-bar-items">
         <nav-bar-item
           route-name="votes"
-          active-route-name="votes"
-          icon-name="search"
+          :active-route-name="routeName"
+          icon-name="votes"
           title="Голосования"
+        />
+      </div>
+      <div class="nav-bar-items">
+        <nav-bar-item
+          route-name="vote-create"
+          :active-route-name="routeName"
+          icon-name="plus"
+          title="Новое голосование"
         />
       </div>
     </div>
@@ -101,9 +133,12 @@ const changeColorSchemaClickHandler = (schemaName: string | undefined) => {
   }
 
   .nav-bar-up-content {
+    display: flex;
+    justify-content: space-around;
+
     .logo {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       align-items: center;
 
       span {
